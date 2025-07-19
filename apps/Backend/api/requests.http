@@ -1,0 +1,28 @@
+### 建立使用者(POST)
+POST http://localhost:3000/user
+Content-Type: application/json
+
+{
+  "name": "Taki",
+  "email": "taki@mygo.com"
+}
+
+### 取得使用者列表(GET)
+GET http://localhost:3000/user
+
+### 取得單一使用者(GET)
+@uuid = 757ee773-cea3-478d-9447-23154625153f
+GET http://localhost:3000/user/{{uuid}}
+
+### 更新使用者(PATCH)
+PATCH http://localhost:3000/user/{{uuid}}
+Content-Type: application/json
+
+{
+  "name": "Valens",
+  "email": "valens@example.com"
+}
+
+### 刪除使用者(DELETE)
+DELETE http://localhost:3000/user/{{uuid}}
+

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "esnext" /* 指定 TypeScript 使用最新 ECMAScript 標準 */,
+    "lib": [
+      "dom",
+      "esnext"
+    ] /* 告訴 TypeScript 要包含哪些環境的型別（這裡有 DOM 跟最新 ES 標準）*/,
+    "jsx": "react-jsx" /* JSX 編譯方式，React 17+ 推薦用法，不需每檔案 import React */,
+    "module": "esnext" /* 編譯後的模組格式（ESNext，適合 Vite 等現代工具） */,
+    "esModuleInterop": true /* 允許使用 CommonJS 模組用 ES6 方式匯入 */,
+    "forceConsistentCasingInFileNames": true /* 檔案引入時強制區分大小寫，避免跨平台問題 */,
+    "strict": true /* 啟用所有嚴格型別檢查 (更安全) */,
+    "skipLibCheck": true /* 跳過 node_modules 內部型別檢查，加快編譯速度 */,
+    "moduleResolution": "node" /* 模組解析策略，Node.js 標準 */,
+    "baseUrl": "." /* 基礎路徑，讓相對路徑更簡潔 */,
+    "paths": {
+      "@/*": ["src/*"] /* 設定別名，讓 src 目錄下的檔案可以用 @/ 開頭引入 */
+    }
+  }
+}
