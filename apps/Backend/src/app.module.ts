@@ -9,6 +9,7 @@ import { Post } from './post/entities/post.entity'; // 引入 Post Entity
 import { PostModule } from './post/post.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { AlphaVantageService } from './stock/services/alpha-vantage.service';
 
 @Module({
   imports: [
@@ -50,6 +51,6 @@ import { JwtModule } from '@nestjs/jwt';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AlphaVantageService],
 })
 export class AppModule {}
