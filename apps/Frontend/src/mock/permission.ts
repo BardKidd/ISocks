@@ -25,54 +25,6 @@ const userPermissions: UserPermission[] = [
       },
     ],
   },
-  {
-    page: 'About',
-    subPage: [
-      {
-        action: 'edit',
-        pageNumber: 'B01',
-        subject: 'B01',
-        path: 'about',
-        order: '1',
-      },
-    ],
-  },
-  {
-    page: 'Form',
-    subPage: [
-      {
-        action: 'edit',
-        pageNumber: 'F01',
-        subject: 'F01',
-        path: 'form',
-        order: '1',
-      },
-    ],
-  },
-  {
-    page: 'Gemini',
-    subPage: [
-      {
-        action: 'edit',
-        pageNumber: 'G01',
-        subject: 'G01',
-        path: 'gemini',
-        order: '1',
-      },
-    ],
-  },
-  {
-    page: 'ChatRoom',
-    subPage: [
-      {
-        action: 'edit',
-        pageNumber: 'C01',
-        subject: 'C01',
-        path: 'chatroom',
-        order: '1',
-      },
-    ],
-  },
 ];
 
 const result: SubPage[] = userPermissions.flatMap((permission) => {
