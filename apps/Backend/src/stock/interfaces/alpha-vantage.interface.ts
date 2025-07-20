@@ -31,7 +31,7 @@ export interface AlphaVantageDailyResponse {
   };
 }
 
-export interface AlphaVantageQUoteResponse {
+export interface AlphaVantageQuoteResponse {
   'Global Quote': {
     '01. symbol': string;
     '02. open': string;

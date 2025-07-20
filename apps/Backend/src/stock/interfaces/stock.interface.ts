@@ -10,7 +10,7 @@ export interface StockSearchResult {
   matchScore: number;
 }
 
-export interface StockDailyData {
+export interface StockPrice {
   symbol: string;
   date: string;
   open: number;
@@ -22,12 +22,13 @@ export interface StockDailyData {
   timezone?: string;
 }
 
-export interface StockQuoteData {
+export interface StockQuote {
   symbol: string;
   currentPrice: number;
   openPrice: number;
   highPrice: number;
   lowPrice: number;
+  previousClose: number;
   change: number;
   changePercent: number;
   volume: number;
