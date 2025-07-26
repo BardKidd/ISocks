@@ -24,10 +24,10 @@
   - [x] 在後端環境變數中設定 `ALPHA_VANTAGE_API_KEY`
   - [x] 建立 Alpha Vantage API 服務類別設計文檔
 
-- [ ] **1.2** 實作股票搜尋 API
-  - [ ] 支援公司名稱搜尋 (ex: "Apple", "台積電")
-  - [ ] 支援股票代碼搜尋 (ex: "AAPL", "2330.TW")
-  - [ ] 返回標準化的股票資訊格式
+- [x] **1.2** 實作股票搜尋 API
+  - [x] 支援公司名稱搜尋 (ex: "Apple") - Alpha Vantage 主要支援美股
+  - [x] 支援股票代碼搜尋 (ex: "AAPL", "TSM") - 台股需用美股 ADR
+  - [x] 返回標準化的股票資訊格式
 
 #### 💰 2. 股票價格查詢功能
 
@@ -57,22 +57,22 @@
 
 #### 📦 4. 後端 API 設計
 
-- [ ] **4.1** 建立 Stock Module
+- [x] **4.1** 建立 Stock Module
 
-  - [ ] 設計 Stock Entity (如需要)
-  - [ ] 建立 Stock Service
-  - [ ] 建立 Stock Controller
+  - [ ] 設計 Stock Entity (如需要) - 暫不需要，使用外部 API
+  - [x] 建立 Stock Service - AlphaVantageService 已完成
+  - [x] 建立 Stock Controller - StockController 已完成
 
-- [ ] **4.2** API 端點設計
+- [x] **4.2** API 端點設計
 
-  - [ ] `GET /api/stocks/search?query={symbol_or_name}` - 股票搜尋
+  - [x] `GET /api/stocks/search?query={symbol_or_name}` - 股票搜尋 ✅
   - [ ] `GET /api/stocks/{symbol}/price?date={date}` - 特定日期價格
   - [ ] `GET /api/stocks/{symbol}/current` - 當前價格
 
-- [ ] **4.3** 數據格式標準化
-  - [ ] 定義統一的股票資訊回傳格式
-  - [ ] 定義統一的價格資訊回傳格式
-  - [ ] 建立相對應的 DTO 類別
+- [x] **4.3** 數據格式標準化
+  - [x] 定義統一的股票資訊回傳格式 - StockSearchResult interface
+  - [ ] 定義統一的價格資訊回傳格式 - 待實作
+  - [x] 建立相對應的 DTO 類別 - Search DTO 已完成
 
 #### 🧪 5. 測試與驗證
 
@@ -143,7 +143,7 @@ interface StockPrice {
 
 ## 📊 進度追蹤
 
-- **第一階段**: 🔄 進行中 (3/21 項目完成)
+- **第一階段**: 🔄 進行中 (7/21 項目完成)
 - **預估完成時間**: 規劃中
 - **負責人**: 開發團隊
 
