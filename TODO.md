@@ -1,6 +1,6 @@
 # IStocks 開發待辦事項
 
-> 請讀取 CLAUDE.md 和 TODO.md，然後協助我繼續 IStocks 專案的開發。
+> 請讀取 CLAUDE.md, claude-dev 的內容, CLAUDE-md-workflow-update.md, restart-prompt 和 TODO.md，然後協助我繼續 IStocks 專案的開發。
 
 ## 📋 專案概述
 
@@ -31,11 +31,11 @@
 
 #### 💰 2. 股票價格查詢功能
 
-- [ ] **2.1** 歷史價格查詢
+- [x] **2.1** 歷史價格查詢
 
-  - [ ] 根據指定日期取得收盤價
-  - [ ] 處理非交易日的邏輯 (取得最近交易日價格)
-  - [ ] 支援不同交易所的時區處理
+  - [x] 根據指定日期取得收盤價
+  - [x] 處理非交易日的邏輯 (取得最近交易日價格)
+  - [x] 支援不同交易所的時區處理
 
 - [ ] **2.2** 即時價格查詢
   - [ ] 取得當前市場價格
@@ -66,12 +66,12 @@
 - [x] **4.2** API 端點設計
 
   - [x] `GET /api/stocks/search?query={symbol_or_name}` - 股票搜尋 ✅
-  - [ ] `GET /api/stocks/{symbol}/price?date={date}` - 特定日期價格
+  - [x] `GET /api/stocks/{symbol}/price?date={date}` - 特定日期價格 ✅
   - [ ] `GET /api/stocks/{symbol}/current` - 當前價格
 
 - [x] **4.3** 數據格式標準化
   - [x] 定義統一的股票資訊回傳格式 - StockSearchResult interface
-  - [ ] 定義統一的價格資訊回傳格式 - 待實作
+  - [x] 定義統一的價格資訊回傳格式 - StockPrice DTO 已完成 ✅
   - [x] 建立相對應的 DTO 類別 - Search DTO 已完成
 
 #### 🧪 5. 測試與驗證
@@ -143,7 +143,7 @@ interface StockPrice {
 
 ## 📊 進度追蹤
 
-- **第一階段**: 🔄 進行中 (7/21 項目完成)
+- **第一階段**: 🔄 進行中 (10/21 項目完成)
 - **預估完成時間**: 規劃中
 - **負責人**: 開發團隊
 
