@@ -146,8 +146,7 @@ export interface StockPrice {
   low: number;
   close: number;
   volume: number;
-  currency?: string;
-  timezone?: string;
+  timezone: string;
 }
 
 // 即時股票報價
@@ -162,7 +161,6 @@ export interface StockQuote {
   changePercent: number;
   volume: number;
   lastTradingDay: string;
-  currency?: string;
 }
 
 // API 設定選項
@@ -291,6 +289,9 @@ export class AlphaVantageService {
       }
 
       const priceData = timeSeries[targetDate];
+      const metadata = response.data['Meta Data'];
+      const timezone = metadata['5. Time Zone'];
+      
       const result: StockPrice = {
         symbol: symbol.toUpperCase(),
         date: targetDate,
@@ -299,6 +300,7 @@ export class AlphaVantageService {
         low: parseFloat(priceData['3. low']),
         close: parseFloat(priceData['4. close']),
         volume: parseFloat(priceData['5. volume']),
+        timezone: timezone,
       };
 
       this.logger.log(\`Found price for \${symbol} on \${targetDate}: \$\${result.close}\`);

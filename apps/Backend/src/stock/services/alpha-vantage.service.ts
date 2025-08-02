@@ -120,6 +120,9 @@ export class AlphaVantageService {
       }
 
       const priceData = timeSeries[targetDate];
+      const metadata = response.data['Meta Data'];
+      const timezone = metadata['5. Time Zone'];
+
       const result: StockPrice = {
         symbol: symbol.toUpperCase(),
         date: targetDate,
@@ -128,6 +131,7 @@ export class AlphaVantageService {
         low: parseFloat(priceData['3. low']),
         close: parseFloat(priceData['4. close']),
         volume: parseInt(priceData['5. volume']),
+        timezone,
       };
 
       this.logger.log(

@@ -18,8 +18,7 @@ export interface StockPrice {
   low: number;
   close: number;
   volume: number;
-  currency?: string;
-  timezone?: string;
+  timezone: string;
 }
 
 export interface StockQuote {
@@ -33,7 +32,6 @@ export interface StockQuote {
   changePercent: number;
   volume: number;
   lastTradingDay: string;
-  currency?: string;
 }
 
 export interface AlphaVantageConfig {

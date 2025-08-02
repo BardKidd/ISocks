@@ -116,13 +116,31 @@ pnpm preview
 
 This project follows a structured development workflow between the user and Claude Code:
 
+### 🚨 CRITICAL RULE: Research Before Implementation (Use Context7)
+**MANDATORY**: Before suggesting any code that uses external APIs, packages, or libraries, Claude Code MUST:
+1. **Use WebSearch/WebFetch (context7)** to verify current official documentation
+2. **Check actual API response formats** from official sources using context7
+3. **Verify package versions and methods** from official docs using context7
+4. **NEVER assume or guess** API structures, field names, or response formats
+
+**Required Research Process (context7)**:
+- External APIs (Alpha Vantage, etc.) → Use context7 to check official API documentation
+- npm packages → Use context7 to check official package documentation and latest versions  
+- Framework methods → Use context7 to verify from official framework documentation
+- Database schemas → Use context7 to check official documentation
+- Any third-party service → Use context7 to verify official specifications
+
+**Context7 Usage Pattern**:
+When user says "use context7" or equivalent, Claude Code must research using WebSearch/WebFetch tools to gather accurate, up-to-date information before providing any implementation suggestions.
+
 ### 1. Task Planning
 - Each development phase is broken down into specific tasks
 - Tasks are documented in `TODO.md` for tracking progress
 - Features are developed incrementally, step by step
 
-### 2. Code Generation & Documentation
-- Claude Code generates implementation ideas and code snippets
+### 2. Code Generation & Documentation (With Research)
+- **FIRST**: Research and verify all external dependencies and APIs
+- Claude Code generates implementation ideas and code snippets based on verified information
 - All code and implementation plans are documented in markdown files
 - Files are organized in a dedicated folder (e.g., `/claude-dev/`)
 - Multiple files can be created for different aspects (API, UI, database, etc.)

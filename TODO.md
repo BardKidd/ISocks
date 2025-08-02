@@ -1,6 +1,6 @@
 # IStocks 開發待辦事項
 
-> 請讀取 CLAUDE.md, claude-dev 的內容, CLAUDE-md-workflow-update.md, restart-prompt 和 TODO.md，然後協助我繼續 IStocks 專案的開發。
+> 請讀取 CLAUDE.md, claude-dev 的內容, CLAUDE-md-workflow-update.md, restart-prompt 和 TODO.md，並 use context7 讀取最新套件資訊。然後協助我繼續 IStocks 專案的開發。
 
 ## 📋 專案概述
 
@@ -37,10 +37,10 @@
   - [x] 處理非交易日的邏輯 (取得最近交易日價格)
   - [x] 支援不同交易所的時區處理
 
-- [ ] **2.2** 即時價格查詢
-  - [ ] 取得當前市場價格
-  - [ ] 判斷市場開盤/收盤狀態
-  - [ ] 處理盤後價格顯示
+- [x] **2.2** 即時價格查詢
+  - [x] 取得當前市場價格
+  - [x] 判斷市場開盤/收盤狀態
+  - [x] 處理盤後價格顯示
 
 #### 🗄️ 3. 數據快取與優化
 
@@ -67,7 +67,7 @@
 
   - [x] `GET /api/stocks/search?query={symbol_or_name}` - 股票搜尋 ✅
   - [x] `GET /api/stocks/{symbol}/price?date={date}` - 特定日期價格 ✅
-  - [ ] `GET /api/stocks/{symbol}/current` - 當前價格
+  - [x] `GET /api/stocks/{symbol}/current` - 當前價格 ✅
 
 - [x] **4.3** 數據格式標準化
   - [x] 定義統一的股票資訊回傳格式 - StockSearchResult interface
@@ -143,7 +143,7 @@ interface StockPrice {
 
 ## 📊 進度追蹤
 
-- **第一階段**: 🔄 進行中 (10/21 項目完成)
+- **第一階段**: 🔄 進行中 (13/21 項目完成)
 - **預估完成時間**: 規劃中
 - **負責人**: 開發團隊
 

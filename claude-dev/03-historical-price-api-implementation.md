@@ -96,18 +96,10 @@ export class StockPriceDataDto {
   volume: number;
 
   @ApiProperty({ 
-    description: '貨幣單位', 
-    example: 'USD',
-    required: false,
-  })
-  currency?: string;
-
-  @ApiProperty({ 
     description: '時區', 
     example: 'US/Eastern',
-    required: false,
   })
-  timezone?: string;
+  timezone: string;
 }
 
 export class StockPriceResponseDto {
@@ -282,7 +274,6 @@ async getStockPrice(
       low: stockPrice.low,
       close: stockPrice.close,
       volume: stockPrice.volume,
-      currency: stockPrice.currency,
       timezone: stockPrice.timezone,
     };
 
