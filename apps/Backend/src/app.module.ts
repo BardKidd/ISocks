@@ -10,6 +10,8 @@ import { PostModule } from './post/post.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { StockModule } from './stock/stock.module';
+import { CacheService } from './cache/cache/cache.service';
+import { RedisCacheService } from './cache/redis-cache.service';
 
 @Module({
   imports: [
@@ -52,6 +54,6 @@ import { StockModule } from './stock/stock.module';
     StockModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, CacheService, RedisCacheService],
 })
 export class AppModule {}

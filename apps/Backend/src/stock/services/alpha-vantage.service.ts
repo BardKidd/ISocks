@@ -27,7 +27,7 @@ export class AlphaVantageService {
     private readonly httpService: HttpService,
   ) {
     this.config = {
-      apiKey: this.configService.get<string>('ALPHA_VANTAGE_API_KEY'),
+      apiKey: this.configService.get<string>('ALPHA_VANTAGE_API_KEY') || '',
       baseUrl: 'https://www.alphavantage.co/query',
       timeout: 10000,
       retryAttempts: 3,
@@ -221,7 +221,7 @@ export class AlphaVantageService {
    * @returns 回應資料
    */
   private async makeRequest<T>(url: string): Promise<AxiosResponse<T>> {
-    let lastError: Error;
+    let lastError: Error = new Error('All retry attempts failed');
 
     for (let attempt = 1; attempt <= this.config.retryAttempts; attempt++) {
       try {
@@ -233,9 +233,10 @@ export class AlphaVantageService {
 
         return response;
       } catch (error) {
-        lastError = error;
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        lastError = error instanceof Error ? error : new Error(errorMessage);
         this.logger.error(
-          `API request attempt ${attempt} failed: ${error.message}`,
+          `API request attempt ${attempt} failed: ${errorMessage}`,
         );
 
         if (attempt < this.config.retryAttempts) {
