@@ -95,7 +95,8 @@ pnpm preview
 
 ### Frontend Structure
 - **UI Framework**: React 19 with Vite
-- **Styling**: Neumorphism design + Tailwind CSS + shadcn/ui components
+- **Design System**: Apple Human Interface Guidelines 2025 (Liquid Glass design system) with optional Neumorphism elements
+- **Styling**: Tailwind CSS + shadcn/ui components
 - **Charts**: Chart.js for portfolio performance visualization
 - **Forms**: React Hook Form with Zod validation
 - **Routing**: React Router v7
@@ -175,7 +176,7 @@ Frontend may require:
 - **Local Storage**: Login state persistence to avoid repeated authentication
 - **Database**: MySQL with TypeORM migrations (synchronization disabled in production)
 - **API Integration**: Alpha Vantage API for real-time stock market data
-- **UI Design**: Neumorphism style combined with shadcn/ui components
+- **UI Design**: Apple Human Interface Guidelines 2025 (Liquid Glass) with optional Neumorphism elements, combined with shadcn/ui components
 - **Charts**: Interactive portfolio performance visualization with Chart.js
 - **Frontend Alias**: Uses `@` pointing to `/src`
 - **Backend**: Uses decorators and metadata reflection
@@ -205,3 +206,126 @@ const response = await firstValueFrom(this.httpService.get(url));
 ```bash
 pnpm install @nestjs/axios axios
 ```
+
+## UI Design System: Apple Human Interface Guidelines 2025
+
+### 🎨 Design Philosophy Update (2025)
+
+**Primary Design System**: Apple Human Interface Guidelines 2025 with **Liquid Glass** design language
+- **Secondary Elements**: Optional Neumorphism elements for specific components
+- **Component Library**: shadcn/ui + Tailwind CSS for implementation
+
+### 🌟 Key 2025 Design Principles
+
+#### 1. **Liquid Glass** - New Functional Layer
+- **Purpose**: Creates spatial relationships between surfaces without stealing focus
+- **Implementation**: Floating UI elements above content with subtle transparency effects
+- **Usage in IStocks**: Modal dialogs, floating action buttons, overlay panels for stock details
+
+#### 2. **Unified Hardware-Software Rhythm**
+- **Principle**: UI curvature aligns with device bezels and proportions
+- **Typography**: Bolder, left-aligned text for improved readability
+- **Application**: Card components, button radiuses, and container shapes follow device proportions
+
+#### 3. **Enhanced Visual Hierarchy**
+- **Colors**: Refined system colors with improved hue differentiation
+- **Typography**: New York (serif) for financial data, San Francisco (sans-serif) for UI elements
+- **Spacing**: Consistent layout that adapts to various screen contexts
+
+### 🎯 Core Design Values
+
+#### **Clarity** (Primary Focus)
+- **Principle**: Every interface element has a clear purpose
+- **IStocks Application**: 
+  - Stock prices displayed with high contrast and large, readable fonts
+  - Portfolio performance charts with clear data visualization
+  - Simplified navigation with intuitive iconography
+
+#### **Deference** (Content-First)
+- **Principle**: UI should enhance content, not compete with it
+- **IStocks Application**:
+  - Stock data and charts as primary visual focus
+  - Minimal decorative elements that don't distract from financial information
+  - Clean backgrounds that make data pop
+
+#### **Depth** (Guided Focus)
+- **Principle**: Subtle shadows and layering guide user attention
+- **IStocks Application**:
+  - Elevated cards for individual stocks
+  - Layered modals for detailed stock information
+  - Subtle depth in interactive elements
+
+### 🎨 Design System Components
+
+#### **Color Strategy**
+- **Financial Data Colors**: High contrast for accessibility
+  - **Positive Returns**: Apple's optimistic green variants
+  - **Negative Returns**: Apple's attention-grabbing red variants
+  - **Neutral Data**: System grays for balanced presentation
+
+#### **Typography Hierarchy**
+```
+Portfolio Headers: SF Pro Display Bold, 32px (left-aligned)
+Stock Prices: New York Medium, 24px (financial data emphasis)
+Stock Names: SF Pro Text Semibold, 18px
+Metadata: SF Pro Text Regular, 14px
+UI Labels: SF Pro Text Medium, 16px
+```
+
+#### **Spacing and Layout**
+- **Grid System**: 8px base unit following Apple's consistent spacing
+- **Card Padding**: 16px/24px for optimal touch targets
+- **Component Margins**: 12px/16px/24px progressive spacing
+- **Safe Areas**: Respect device notches and bezels
+
+#### **Interactive Elements**
+- **Touch Targets**: Minimum 44x44pt following accessibility guidelines
+- **Button Styles**: Rounded corners matching device curvature
+- **Hover States**: Subtle Liquid Glass effects for web interactions
+- **Focus States**: High contrast borders for keyboard navigation
+
+### 🔧 Implementation Guidelines
+
+#### **Web-Specific Adaptations**
+- **Custom Toolbars**: Remove unnecessary background colors, rely on layout for hierarchy
+- **Navigation**: Organize by function and frequency of use
+- **Responsive Design**: Adapt Apple's principles across device breakpoints
+
+#### **Accessibility Focus**
+- **Dynamic Type**: Support for user-preferred text sizes
+- **High Contrast**: Enhanced color differentiation for visual accessibility
+- **Multiple Interaction Methods**: Support for touch, keyboard, and assistive technologies
+- **Color Independence**: Information not solely conveyed through color
+
+### 💼 IStocks-Specific Design Applications
+
+#### **Dashboard Design**
+- **Layout**: Left-aligned headers with portfolio summary cards
+- **Data Visualization**: Clean, high-contrast charts with Liquid Glass overlays
+- **Navigation**: Tab-based structure following Apple's organizational patterns
+
+#### **Stock Detail Views**
+- **Information Hierarchy**: Price prominence, secondary details in organized sections
+- **Interactive Elements**: Floating action buttons for buy/sell actions
+- **Historical Data**: Clean timeline visualization with clear data points
+
+#### **Portfolio Management**
+- **List Design**: Card-based layout with consistent spacing and shadows
+- **Actions**: Context-sensitive buttons with clear visual feedback
+- **Forms**: Clean input design with helpful validation states
+
+### 🚀 Implementation Priority
+
+1. **Phase 1**: Establish basic color palette and typography system
+2. **Phase 2**: Implement core component library with Apple-inspired designs
+3. **Phase 3**: Add Liquid Glass effects and advanced interactive elements
+4. **Phase 4**: Refine with optional Neumorphism elements where appropriate
+
+### 📚 Resources and References
+
+- **Official Documentation**: [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
+- **Design Resources**: [Apple Design Resources](https://developer.apple.com/design/resources/)
+- **2025 Updates**: WWDC 2025 - "Get to know the new design system"
+- **Accessibility**: [Apple Accessibility Guidelines](https://developer.apple.com/design/human-interface-guidelines/accessibility)
+
+This design system ensures IStocks provides a premium, accessible, and intuitive user experience that feels natural to users familiar with Apple's ecosystem while being functional across all web platforms.
