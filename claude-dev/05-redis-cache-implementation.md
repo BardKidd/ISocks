@@ -1,9 +1,11 @@
 # Redis 快取機制實作 - TODO 3.1
 
 ## 📋 概述
+
 實作 TODO 3.1：建立 Redis 快取機制，優化 Alpha Vantage API 呼叫頻率，減少重複請求並提升系統效能。
 
 ## 🎯 實作目標
+
 1. **整合 Redis 快取服務** - 設定 Redis 連線和配置
 2. **實作智能快取策略** - 針對不同 API 端點設定適當的快取時間
 3. **優化 Alpha Vantage 服務** - 加入快取邏輯避免重複 API 呼叫
@@ -17,16 +19,19 @@
 根據現有實作的三個主要功能設計不同快取策略：
 
 #### 1. **股票搜尋 (`searchStocks`)**
+
 - **快取鍵**: `stock_search:{query}`
 - **快取時間**: **1小時** (3600秒)
 - **理由**: 搜尋結果相對穩定，公司基本資訊不常變動
 
 #### 2. **歷史價格 (`getStockPrice`)**
+
 - **快取鍵**: `stock_price:{symbol}:{date}`
 - **快取時間**: **24小時** (86400秒)
 - **理由**: 歷史價格不會變更，可長時間快取
 
 #### 3. **即時價格 (`getCurrentQuote`)**
+
 - **快取鍵**: `stock_current:{symbol}`
 - **動態快取時間**:
   - 開盤時間: **1分鐘** (60秒) - 需要較新的價格資訊
@@ -63,12 +68,14 @@ pnpm install redis @nestjs/cache-manager cache-manager cache-manager-redis-store
 ```
 
 **新增的依賴說明**:
+
 - `redis`: Redis 客戶端 (最新版本 5.8.0)
 - `@nestjs/cache-manager`: NestJS 快取管理器
 - `cache-manager`: 快取管理抽象層
 - `cache-manager-redis-store`: Redis 快取存儲
 
 **⚠️ Redis 客戶端配置更新 (2024)**:
+
 - 使用最新的 `redis` v5 客戶端
 - 配置選項已驗證：`socketTimeout` 取代了舊版的 `commandTimeout`
 - 新增效能優化選項：`noDelay`, `keepAlive` 等
@@ -153,15 +160,16 @@ export class RedisCacheService extends CacheService implements OnModuleDestroy {
    */
   private async initializeRedis(): Promise<void> {
     try {
-      const redisUrl = this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
-      
+      const redisUrl =
+        this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
+
       this.client = createClient({
         url: redisUrl,
         socket: {
-          connectTimeout: 10000,    // 10秒連線超時
-          socketTimeout: 30000,     // 30秒 Socket 閒置超時
-          noDelay: true,           // 禁用 Nagle 算法，優化延遲
-          keepAlive: true,         // 保持連線活動
+          connectTimeout: 10000, // 10秒連線超時
+          socketTimeout: 30000, // 30秒 Socket 閒置超時
+          noDelay: true, // 禁用 Nagle 算法，優化延遲
+          keepAlive: true, // 保持連線活動
           keepAliveInitialDelay: 5000, // Keep-alive 初始延遲
         },
       });
@@ -184,7 +192,6 @@ export class RedisCacheService extends CacheService implements OnModuleDestroy {
 
       await this.client.connect();
       this.logger.log('Redis 快取服務初始化完成');
-
     } catch (error) {
       this.logger.error(`Redis 初始化失敗: ${error.message}`, error.stack);
       this.isConnected = false;
@@ -203,7 +210,7 @@ export class RedisCacheService extends CacheService implements OnModuleDestroy {
 
       const serializedValue = JSON.stringify(value);
       await this.client.setEx(key, ttl, serializedValue);
-      
+
       this.logger.debug(`快取已設定: ${key} (TTL: ${ttl}秒)`);
     } catch (error) {
       this.logger.error(`設定快取失敗 [${key}]: ${error.message}`, error.stack);
@@ -221,7 +228,7 @@ export class RedisCacheService extends CacheService implements OnModuleDestroy {
       }
 
       const cachedValue = await this.client.get(key);
-      
+
       if (cachedValue === null) {
         this.logger.debug(`快取未命中: ${key}`);
         return null;
@@ -230,7 +237,6 @@ export class RedisCacheService extends CacheService implements OnModuleDestroy {
       const parsedValue = JSON.parse(cachedValue);
       this.logger.debug(`快取命中: ${key}`);
       return parsedValue as T;
-
     } catch (error) {
       this.logger.error(`讀取快取失敗 [${key}]: ${error.message}`, error.stack);
       return null;
@@ -283,7 +289,10 @@ export class RedisCacheService extends CacheService implements OnModuleDestroy {
       const exists = await this.client.exists(key);
       return exists === 1;
     } catch (error) {
-      this.logger.error(`檢查快取存在失敗 [${key}]: ${error.message}`, error.stack);
+      this.logger.error(
+        `檢查快取存在失敗 [${key}]: ${error.message}`,
+        error.stack
+      );
       return false;
     }
   }
@@ -301,7 +310,10 @@ export class RedisCacheService extends CacheService implements OnModuleDestroy {
       await this.client.expire(key, ttl);
       this.logger.debug(`快取過期時間已設定: ${key} (TTL: ${ttl}秒)`);
     } catch (error) {
-      this.logger.error(`設定快取過期時間失敗 [${key}]: ${error.message}`, error.stack);
+      this.logger.error(
+        `設定快取過期時間失敗 [${key}]: ${error.message}`,
+        error.stack
+      );
     }
   }
 
@@ -370,7 +382,7 @@ export class AlphaVantageService {
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
-    private readonly cacheService: CacheService, // 新增快取服務
+    private readonly cacheService: CacheService // 新增快取服務
   ) {
     // ... 現有的構造函數邏輯保持不變
   }
@@ -380,46 +392,52 @@ export class AlphaVantageService {
    */
   async searchStocks(query: string): Promise<StockSearchResult[]> {
     const cacheKey = `stock_search:${query.toLowerCase()}`;
-    
+
     try {
       // 嘗試從快取獲取
-      const cachedResults = await this.cacheService.get<StockSearchResult[]>(cacheKey);
+      const cachedResults =
+        await this.cacheService.get<StockSearchResult[]>(cacheKey);
       if (cachedResults) {
         this.logger.log(`Stock search cache hit: ${query}`);
         return cachedResults;
       }
 
       this.logger.log(`Searching stocks with query: ${query} (cache miss)`);
-      
+
       // 呼叫原有的 API 邏輯
       const url = this.buildUrl('SYMBOL_SEARCH', { keywords: query });
       const response = await this.makeRequest<AlphaVantageSearchResponse>(url);
 
       this.checkForErrors(response.data);
 
-      const results: StockSearchResult[] = response.data.bestMatches?.map(match => ({
-        symbol: match['1. symbol'],
-        name: match['2. name'],
-        type: match['3. type'],
-        region: match['4. region'],
-        marketOpen: match['5. marketOpen'],
-        marketClose: match['6. marketClose'],
-        timezone: match['7. timezone'],
-        currency: match['8. currency'],
-        matchScore: parseFloat(match['9. matchScore']),
-      })) || [];
+      const results: StockSearchResult[] =
+        response.data.bestMatches?.map((match) => ({
+          symbol: match['1. symbol'],
+          name: match['2. name'],
+          type: match['3. type'],
+          region: match['4. region'],
+          marketOpen: match['5. marketOpen'],
+          marketClose: match['6. marketClose'],
+          timezone: match['7. timezone'],
+          currency: match['8. currency'],
+          matchScore: parseFloat(match['9. matchScore']),
+        })) || [];
 
       // 設定快取 (1小時)
       await this.cacheService.set(cacheKey, results, 3600);
 
-      this.logger.log(`Found ${results.length} stocks for query: ${query} (cached)`);
+      this.logger.log(
+        `Found ${results.length} stocks for query: ${query} (cached)`
+      );
       return results;
-
     } catch (error) {
-      this.logger.error(`Error searching stocks: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error searching stocks: ${error.message}`,
+        error.stack
+      );
       throw new HttpException(
         'Failed to search stocks',
-        HttpStatus.SERVICE_UNAVAILABLE,
+        HttpStatus.SERVICE_UNAVAILABLE
       );
     }
   }
@@ -427,9 +445,12 @@ export class AlphaVantageService {
   /**
    * 取得特定日期的股票價格 (加入快取)
    */
-  async getStockPrice(symbol: string, date: string): Promise<StockPrice | null> {
+  async getStockPrice(
+    symbol: string,
+    date: string
+  ): Promise<StockPrice | null> {
     const cacheKey = `stock_price:${symbol.toUpperCase()}:${date}`;
-    
+
     try {
       // 嘗試從快取獲取
       const cachedPrice = await this.cacheService.get<StockPrice>(cacheKey);
@@ -438,14 +459,16 @@ export class AlphaVantageService {
         return cachedPrice;
       }
 
-      this.logger.log(`Getting stock price for ${symbol} on ${date} (cache miss)`);
+      this.logger.log(
+        `Getting stock price for ${symbol} on ${date} (cache miss)`
+      );
 
       // 呼叫原有的 API 邏輯
-      const url = this.buildUrl('TIME_SERIES_DAILY', { 
+      const url = this.buildUrl('TIME_SERIES_DAILY', {
         symbol: symbol.toUpperCase(),
-        outputsize: 'compact'
+        outputsize: 'compact',
       });
-      
+
       const response = await this.makeRequest<AlphaVantageDailyResponse>(url);
       this.checkForErrors(response.data);
 
@@ -477,14 +500,18 @@ export class AlphaVantageService {
       // 設定快取 (24小時)
       await this.cacheService.set(cacheKey, result, 86400);
 
-      this.logger.log(`Found price for ${symbol} on ${targetDate}: $${result.close} (cached)`);
+      this.logger.log(
+        `Found price for ${symbol} on ${targetDate}: $${result.close} (cached)`
+      );
       return result;
-
     } catch (error) {
-      this.logger.error(`Error getting stock price: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error getting stock price: ${error.message}`,
+        error.stack
+      );
       throw new HttpException(
         'Failed to get stock price',
-        HttpStatus.SERVICE_UNAVAILABLE,
+        HttpStatus.SERVICE_UNAVAILABLE
       );
     }
   }
@@ -494,7 +521,7 @@ export class AlphaVantageService {
    */
   async getCurrentQuote(symbol: string): Promise<StockQuote> {
     const cacheKey = `stock_current:${symbol.toUpperCase()}`;
-    
+
     try {
       // 嘗試從快取獲取
       const cachedQuote = await this.cacheService.get<StockQuote>(cacheKey);
@@ -506,7 +533,9 @@ export class AlphaVantageService {
       this.logger.log(`Getting current quote for ${symbol} (cache miss)`);
 
       // 呼叫原有的 API 邏輯
-      const url = this.buildUrl('GLOBAL_QUOTE', { symbol: symbol.toUpperCase() });
+      const url = this.buildUrl('GLOBAL_QUOTE', {
+        symbol: symbol.toUpperCase(),
+      });
       const response = await this.makeRequest<AlphaVantageQuoteResponse>(url);
 
       this.checkForErrors(response.data);
@@ -533,14 +562,18 @@ export class AlphaVantageService {
       const cacheTtl = this.getCurrentQuoteCacheTtl();
       await this.cacheService.set(cacheKey, result, cacheTtl);
 
-      this.logger.log(`Current quote for ${symbol}: $${result.currentPrice} (cached for ${cacheTtl}s)`);
+      this.logger.log(
+        `Current quote for ${symbol}: $${result.currentPrice} (cached for ${cacheTtl}s)`
+      );
       return result;
-
     } catch (error) {
-      this.logger.error(`Error getting current quote: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error getting current quote: ${error.message}`,
+        error.stack
+      );
       throw new HttpException(
         'Failed to get current quote',
-        HttpStatus.SERVICE_UNAVAILABLE,
+        HttpStatus.SERVICE_UNAVAILABLE
       );
     }
   }
@@ -552,10 +585,10 @@ export class AlphaVantageService {
   private getCurrentQuoteCacheTtl(): number {
     const now = new Date();
     const currentHour = now.getUTCHours();
-    
+
     // 美東時間 9:30-16:00 為開盤時間 (UTC: 14:30-21:00)
     const easternHour = (currentHour - 5 + 24) % 24;
-    
+
     if (easternHour >= 9.5 && easternHour < 16) {
       // 開盤時間: 1分鐘快取
       return 60;
@@ -583,7 +616,7 @@ import { CacheModule } from '../cache/cache.module'; // 新增
 
 @Module({
   imports: [
-    HttpModule, 
+    HttpModule,
     ConfigModule,
     CacheModule, // 新增快取模組
   ],
@@ -666,134 +699,97 @@ redis-cli ping
 
 **Another Redis Desktop Manager** 是一個優秀的 Redis GUI 管理工具，讓你可以視覺化地管理和監控 Redis 資料。
 
-#### 安裝 Another Redis Desktop Manager
+#### 安裝 Another Redis Desktop Manager (macOS)
 
-**macOS** (推薦使用 Homebrew):
-```bash
-# 首次安裝
-brew install --cask another-redis-desktop-manager
-
-# 更新到最新版本
-brew upgrade --cask another-redis-desktop-manager
-
-# 重新安裝 (如果遇到問題或想要全新安裝)
-brew reinstall --cask another-redis-desktop-manager
-
-# 卸載 (如果需要)
-brew uninstall --cask another-redis-desktop-manager
-```
-
-**如果安裝後無法開啟 (macOS 安全性問題)**:
-```bash
-# 移除 macOS 的隔離屬性
-sudo xattr -rd com.apple.quarantine /Applications/Another\ Redis\ Desktop\ Manager.app
-```
-
-**Windows**:
-```bash
-# 使用 Chocolatey
-choco install another-redis-desktop-manager
-
-# 更新 Chocolatey 版本
-choco upgrade another-redis-desktop-manager
-
-# 或使用 Winget
-winget install qishibo.AnotherRedisDesktopManager
-
-# 更新 Winget 版本
-winget upgrade qishibo.AnotherRedisDesktopManager
-```
-
-**Linux**:
-```bash
-# 使用 Snap
-sudo snap install another-redis-desktop-manager
-
-# 更新 Snap 版本
-sudo snap refresh another-redis-desktop-manager
-
-# SSH 金鑰權限 (如果需要)
-sudo snap connect another-redis-desktop-manager:ssh-keys
-```
-
-**直接下載**:
-- 訪問 [GitHub Releases](https://github.com/qishibo/AnotherRedisDesktopManager/releases)
-- 下載對應平台的安裝包
-- 官方網站: [goanother.com](https://goanother.com/)
-
-**版本更新檢查**:
-- 啟動軟體後，點擊選單 "Help" → "Check for Updates"
-- 或在軟體內看到更新提示時點擊更新
+**從 GitHub 直接下載**:
+1. 訪問 [GitHub Releases](https://github.com/qishibo/AnotherRedisDesktopManager/releases)
+2. 下載最新版本的 `.dmg` 檔案
+3. 雙擊 `.dmg` 檔案並將應用程式拖拉到 Applications 資料夾
+4. 如果遇到 macOS 安全性警告，請前往「系統偏好設定」→「安全性與隱私權」→ 點擊「仍要開啟」
 
 #### 連接本地 Redis
 
 1. **啟動 Another Redis Desktop Manager**
 
 2. **新建連接**:
-   - 點擊左上角的 "+" 或 "New Connection"
+   - 點擊主畫面的 "New Connection" 按鈕
+   - 或點擊左上角的 "+" 圖示
 
 3. **填寫連接資訊**:
    ```
-   Connection Name: IStocks Local Redis
-   Host: 127.0.0.1 (或 localhost)
+   Name: IStocks Local Redis
+   Host: 127.0.0.1
    Port: 6379
-   Auth: (如果沒有設定密碼則留空)
-   Database: 0 (預設)
+   Password: (通常留空，除非您有設定 Redis 密碼)
+   Username: (留空，Redis 6.0+ 才需要)
    ```
 
 4. **測試並保存連接**:
-   - 點擊 "Test Connection" 確認連接成功
-   - 點擊 "OK" 保存連接
+   - 點擊 "Test Connection" 按鈕確認連接成功
+   - 顯示綠色 "Success" 後，點擊 "OK" 保存連接
 
 #### 快取監控和管理
 
 **查看快取鍵值**:
-- 連接成功後，左側樹狀列表會顯示所有資料庫
-- 點擊 "db0" 查看快取的鍵值
-- 可以看到類似這樣的鍵：
+- 連接成功後，左側會顯示連接名稱，點擊展開可看到資料庫列表
+- 點擊 "db0" 展開查看所有快取鍵值
+- 您會看到類似這樣的鍵：
   ```
-  stock_search:aapl
-  stock_price:AAPL:2024-01-15
-  stock_current:AAPL
+  📄 stock_search:aapl
+  📄 stock_price:AAPL:2024-01-15  
+  📄 stock_current:AAPL
   ```
 
 **查看快取內容**:
-- 點擊任意鍵值查看詳細內容
-- 可以看到 JSON 格式的快取資料
-- 支援多種格式顯示 (Text, JSON, Hex 等)
+- 點擊任意鍵值，右側面板會顯示詳細內容
+- 支援多種格式檢視：Text、JSON、Binary 等
+- 可以看到完整的 JSON 格式快取資料
+- 右上角會顯示 TTL 剩餘時間
 
 **快取管理操作**:
-- **查看 TTL**: 右側會顯示過期時間
-- **刪除快取**: 右鍵選擇 "Delete"
-- **編輯快取**: 點擊 "Edit" 修改內容
-- **重新整理**: 點擊重新整理圖示更新列表
+- **查看 TTL**: 選中鍵值後，右側會顯示剩餘過期時間
+- **刪除快取**: 右鍵點擊鍵值選擇 "Delete Key"
+- **編輯快取**: 點擊右側的 "Edit" 按鈕修改內容
+- **重新整理**: 右鍵點擊資料庫選擇 "Refresh" 或使用快捷鍵
 
 **監控快取使用情況**:
-- 查看 "Info" 頁籤了解 Redis 記憶體使用
-- 監控連接數和命令統計
-- 查看快取命中率等關鍵指標
+- 右鍵點擊連接名稱選擇 "Server Info" 查看 Redis 狀態
+- 監控記憶體使用量、連接數等關鍵指標
+- 使用 "Console" 頁籤執行 Redis 命令進行詳細分析
 
 #### 開發除錯技巧
 
 **即時監控 API 呼叫**:
-1. 在 "Console" 頁籤中執行 `MONITOR` 命令
-2. 即時查看所有 Redis 操作
-3. 測試 API 端點時觀察快取讀寫
+1. 右鍵點擊連接名稱，選擇 "Console"
+2. 在命令列輸入 `MONITOR` 並按 Enter
+3. 即時查看所有 Redis 操作（包括您的 API 呼叫產生的快取讀寫）
+4. 按 Ctrl+C 停止監控
 
 **檢查特定快取**:
+在 Console 中執行以下命令：
 ```redis
-# 在 Console 中執行
+# 查看所有股票相關的快取鍵
 KEYS stock_*
+
+# 檢查特定快取內容
 GET stock_search:aapl
+
+# 查看快取剩餘時間
 TTL stock_current:AAPL
+
+# 查看快取是否存在
+EXISTS stock_price:AAPL:2024-01-15
 ```
 
 **清除測試快取**:
 ```redis
 # 清除所有 stock_ 開頭的快取
-EVAL "return redis.call('del', 'defaultDB', unpack(redis.call('keys', ARGV[1])))" 0 stock_*
+DEL stock_search:aapl stock_current:AAPL
 
-# 或清除整個資料庫 (謹慎使用)
+# 或使用模式刪除（謹慎使用）
+EVAL "local keys = redis.call('keys', ARGV[1]) for i=1,#keys,5000 do redis.call('del', unpack(keys, i, math.min(i+4999, #keys))) end return #keys" 0 stock_*
+
+# 清除整個資料庫 (非常謹慎使用)
 FLUSHDB
 ```
 
@@ -814,6 +810,7 @@ GET /api/stocks/search?query=AAPL
 ### 2. Redis 資料檢查
 
 **方式一: 使用 Redis CLI**
+
 ```bash
 # 連接 Redis CLI
 redis-cli
@@ -831,6 +828,7 @@ TTL stock_current:AAPL
 ```
 
 **方式二: 使用 Another Redis Desktop Manager (推薦)**
+
 1. 開啟 Another Redis Desktop Manager
 2. 連接到本地 Redis (127.0.0.1:6379)
 3. 在左側資料庫樹狀列表中查看所有快取鍵
@@ -838,6 +836,7 @@ TTL stock_current:AAPL
 5. 可以視覺化地監控快取使用情況
 
 **快取鍵值範例**:
+
 ```
 📁 db0
   📄 stock_search:aapl
@@ -851,20 +850,25 @@ TTL stock_current:AAPL
 ## ✅ 實作檢查清單
 
 ### 📝 需要建立的新檔案
+
 - [x] `cache/cache.service.ts` - 快取服務抽象介面 ✅
 - [x] `cache/redis-cache.service.ts` - Redis 快取實作 ✅
-- [ ] `cache/cache.module.ts` - 快取模組定義
+- [x] `cache/cache.module.ts` - 快取模組定義 ✅
 
 ### 🔧 需要修改的現有檔案
-- [ ] `stock/services/alpha-vantage.service.ts` - 整合快取邏輯
-- [ ] `stock/stock.module.ts` - 導入快取模組
-- [ ] `app.module.ts` - 註冊全域快取模組
+
+- [x] `stock/services/alpha-vantage.service.ts` - 整合快取邏輯 ✅
+- [x] `stock/stock.module.ts` - 導入快取模組 ✅
+- [x] `app.module.ts` - 註冊全域快取模組 ✅
 - [x] `package.json` - 新增 Redis 依賴 ✅
+- [x] 修正 TypeScript 型別錯誤 ✅
 
 ### 🧪 功能驗證項目
-- [ ] Redis 服務正常啟動和連線
-- [ ] 股票搜尋快取生效 (1小時)
-- [ ] 歷史價格快取生效 (24小時)
+
+- [x] Redis 服務正常啟動和連線 ✅
+- [x] 快取服務成功初始化 ✅
+- [ ] 股票搜尋快取生效測試 (1小時)
+- [ ] 歷史價格快取生效測試 (24小時)
 - [ ] 即時價格智能快取 (開盤1分鐘/收盤15分鐘)
 - [ ] 快取命中/未命中日誌正確顯示
 - [ ] API 響應時間明顯改善
@@ -873,16 +877,19 @@ TTL stock_current:AAPL
 ## 🎯 實作重點
 
 ### 1. 智能快取策略
+
 - **股票搜尋**: 長時間快取，因為公司基本資訊變動較少
 - **歷史價格**: 最長快取，因為歷史資料不會變更
 - **即時價格**: 動態快取，根據市場開盤狀態調整頻率
 
 ### 2. 錯誤處理和降級
+
 - Redis 連線失敗時自動降級為無快取模式
 - 快取操作失敗時不影響主要業務邏輯
 - 完整的錯誤日誌記錄
 
 ### 3. 效能優化
+
 - 減少對 Alpha Vantage API 的重複呼叫
 - 符合 API 頻率限制 (每分鐘5次)
 - 改善用戶端回應速度
@@ -898,16 +905,19 @@ TTL stock_current:AAPL
 ## 🧪 測試建議
 
 ### 單元測試
+
 - 快取服務的 set/get/delete 操作
 - Alpha Vantage 服務的快取邏輯
 - Redis 連線失敗時的降級行為
 
 ### 整合測試
+
 - 端到端的 API 快取流程
 - 不同快取策略的驗證
 - 快取過期時間的準確性
 
 ### 效能測試
+
 - 快取命中時的回應時間
 - 快取未命中時的回應時間
 - 大量並發請求的快取效能
@@ -915,6 +925,7 @@ TTL stock_current:AAPL
 ## 🎯 下一步
 
 完成此快取機制後，可以繼續進行：
+
 - **TODO 5.1**: 建立單元測試覆蓋快取功能
 - **TODO 5.2**: 整合測試驗證快取效果
 - **效能監控**: 實作快取命中率監控和報表

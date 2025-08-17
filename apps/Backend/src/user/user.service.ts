@@ -45,7 +45,7 @@ export class UserService {
   }
 
   // 專門用於登入驗證使用來比較密碼
-  async findUserForAuth(email: string): Promise<User | undefined> {
+  async findUserForAuth(email: string): Promise<User | null> {
     // createQueryBuilder 可以使用鏈式(chaining) 來處理複雜的 SQL 查詢。特別是當一般的 find, findOne, save 無法完成需求時。
     return (
       this.userRepository

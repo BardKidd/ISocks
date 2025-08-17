@@ -16,6 +16,7 @@ import {
   AlphaVantageQuoteResponse,
   AlphaVantageSearchResponse,
 } from '../interfaces/alpha-vantage.interface';
+import { CacheService } from 'src/cache/cache.service';
 
 @Injectable()
 export class AlphaVantageService {
@@ -25,6 +26,7 @@ export class AlphaVantageService {
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
+    private readonly cacheService: CacheService,
   ) {
     this.config = {
       apiKey: this.configService.get<string>('ALPHA_VANTAGE_API_KEY') || '',
@@ -45,8 +47,17 @@ export class AlphaVantageService {
    * @returns 股票搜尋結果陣列
    */
   async searchStocks(query: string): Promise<StockSearchResult[]> {
+    const cacheKey = `stock_search: ${query.toLowerCase()}`;
     try {
-      this.logger.log(`Searching stocks with query: ${query}`);
+      // 嘗試從快取獲取
+      const cachedResults =
+        await this.cacheService.get<StockSearchResult[]>(cacheKey);
+      if (cachedResults) {
+        this.logger.log(`Stock search cache hit: ${query}`);
+        return cachedResults;
+      }
+
+      this.logger.log(`Searching stocks with query: ${query} (cache miss)`);
 
       const url = this.buildUrl('SYMBOL_SEARCH', {
         keywords: query,
@@ -70,7 +81,11 @@ export class AlphaVantageService {
           matchScore: parseFloat(match['9. matchScore']),
         })) || [];
 
-      this.logger.log(`Found ${results.length} stocks for query: ${query}`);
+      await this.cacheService.set(cacheKey, results, 3600);
+
+      this.logger.log(
+        `Found ${results.length} stocks for query: ${query} (cached)`,
+      );
 
       return results;
     } catch (error) {
@@ -95,8 +110,17 @@ export class AlphaVantageService {
     symbol: string,
     date: string,
   ): Promise<StockPrice | null> {
+    const cacheKey = `stock_price: ${symbol.toUpperCase()}:${date}`;
+
     try {
-      this.logger.log(`Getting stock price for ${symbol} on ${date}`);
+      const cachedPrice = await this.cacheService.get<StockPrice>(cacheKey);
+      if (cachedPrice) {
+        this.logger.log(`Stock price cache hit: ${symbol} on ${date}`);
+        return cachedPrice;
+      }
+      this.logger.log(
+        `Getting stock price for ${symbol} on ${date} (cache miss)`,
+      );
 
       const url = this.buildUrl('TIME_SERIES_DAILY', {
         symbol: symbol.toUpperCase(),
@@ -134,8 +158,11 @@ export class AlphaVantageService {
         timezone,
       };
 
+      // 設定快取（24小時）
+      await this.cacheService.set(cacheKey, result, 86400);
+
       this.logger.log(
-        `Found price for ${symbol} on ${targetDate}: ${result.close}`,
+        `Found price for ${symbol} on ${targetDate}: ${result.close} (cached)`,
       );
       return result;
     } catch (error) {
@@ -156,7 +183,16 @@ export class AlphaVantageService {
    * @returns 即時報價資訊
    */
   async getCurrentQuote(symbol: string): Promise<StockQuote> {
+    const cacheKey = `stock_current: ${symbol.toUpperCase()}`;
+
     try {
+      // 嘗試從快取獲取
+      const cachedQuote = await this.cacheService.get<StockQuote>(cacheKey);
+      if (cachedQuote) {
+        this.logger.log(`Current quote cache hit: ${symbol}`);
+        return cachedQuote;
+      }
+
       this.logger.log(`Getting current quote for ${symbol}`);
 
       const url = this.buildUrl('GLOBAL_QUOTE', {
@@ -185,7 +221,12 @@ export class AlphaVantageService {
         lastTradingDay: quote['07. latest trading day'],
       };
 
-      this.logger.log(`Current quote for ${symbol}: ${result.currentPrice}`);
+      const cacheTtl = this.getCurrentQuoteCacheTtl();
+      await this.cacheService.set(cacheKey, result, cacheTtl);
+
+      this.logger.log(
+        `Current quote for ${symbol}: $${result.currentPrice} (cached for ${cacheTtl}s)`,
+      );
       return result;
     } catch (error) {
       this.logger.error(
@@ -196,6 +237,24 @@ export class AlphaVantageService {
         'Failed to get current quote',
         HttpStatus.SERVICE_UNAVAILABLE,
       );
+    }
+  }
+
+  /**
+   * 根據市場狀態決定即時報價的快取時間
+   * @returns 快取時間（秒）
+   */
+  private getCurrentQuoteCacheTtl(): number {
+    const now = new Date();
+    const currentHour = now.getUTCHours();
+
+    // 美東時間 9:30-16:00 為開盤時間（UTC: 14:30-21:00）
+    const easternHour = (currentHour - 5 + 24) % 24; // <- 防止負數情況
+
+    if (easternHour >= 9.5 && easternHour < 16) {
+      return 60; // 開盤時間：1分鐘快取
+    } else {
+      return 900; // 收盤時間
     }
   }
 
@@ -233,7 +292,8 @@ export class AlphaVantageService {
 
         return response;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         lastError = error instanceof Error ? error : new Error(errorMessage);
         this.logger.error(
           `API request attempt ${attempt} failed: ${errorMessage}`,

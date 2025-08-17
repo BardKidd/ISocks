@@ -7,10 +7,12 @@ import { Post } from './post/entities/post.entity';
 // 載入 .env 檔案中的環境變數
 dotenv.config();
 
+const DB_PORT: string = process.env.DB_PORT as string;
+
 export const AppDataSource = new DataSource({
   type: 'mysql',
   host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT, 10),
+  port: parseInt(DB_PORT, 10),
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,

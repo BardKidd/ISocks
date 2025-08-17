@@ -35,7 +35,7 @@ export class PostService {
     };
   }
 
-  async findPosts(userId): Promise<{
+  async findPosts(userId: string): Promise<{
     posts: Post[];
     user: string;
   }> {

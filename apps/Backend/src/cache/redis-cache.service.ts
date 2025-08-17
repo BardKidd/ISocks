@@ -37,12 +37,18 @@ export class RedisCacheService extends CacheService implements OnModuleDestroy {
         this.isConnected = false;
       });
 
+      this.client.on('connect', () => {
+        this.logger.log('Redis 連線建立成功');
+        this.isConnected = true;
+      });
+
       this.client.on('disconnect', () => {
         this.logger.warn('Redis 連線中斷');
         this.isConnected = false;
       });
 
       await this.client.connect();
+      this.isConnected = true; // 確保連線成功後設定狀態
       this.logger.log('Redis 快取服務初始化完成');
     } catch (error) {
       const errorMessage =

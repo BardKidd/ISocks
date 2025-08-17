@@ -25,8 +25,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
       const exceptionResponse = exception.getResponse();
       if (typeof exceptionResponse === 'string') {
         message = exceptionResponse;
-      } else if (typeof exceptionResponse === 'object' && exceptionResponse['message']) {
-        message = exceptionResponse['message'];
+      } else if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
+        const responseObj = exceptionResponse as Record<string, any>;
+        if ('message' in responseObj) {
+          message = responseObj.message;
+        }
       }
     }
 
