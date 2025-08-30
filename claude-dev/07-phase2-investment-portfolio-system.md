@@ -12,7 +12,6 @@ export class User {
   email: string;        // 電子信箱 (unique)
   password: string;     // bcrypt 加密密碼
   createdAt: Date;      // 註冊時間
-  posts: Post[];        // 與 Post 的關聯
 }
 
 // 現有 Auth 功能
@@ -54,6 +53,7 @@ User 刪除 → 自動刪除所有 Portfolio → 自動刪除所有 Position →
 ### 💡 TypeORM 關聯詳解
 
 #### **一對多關聯 (@OneToMany)**
+
 ```typescript
 // 在 User entity 中
 @OneToMany(() => Portfolio, (portfolio) => portfolio.user)
@@ -64,8 +64,9 @@ portfolios: Portfolio[];
 ```
 
 #### **多對一關聯 (@ManyToOne)**
+
 ```typescript
-// 在 Portfolio entity 中  
+// 在 Portfolio entity 中
 @ManyToOne(() => User, (user) => user.portfolios, { onDelete: 'CASCADE' })
 @JoinColumn({ name: 'userId' })
 user: User;
@@ -76,12 +77,13 @@ user: User;
 ```
 
 #### **DECIMAL 精度設定**
+
 ```typescript
 @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
 totalPortfolioValue: number;
 
 // precision: 15 → 總共 15 位數字
-// scale: 2 → 小數點後 2 位  
+// scale: 2 → 小數點後 2 位
 // 範例：999,999,999,999.99 (13位整數 + 2位小數)
 // 用於金錢計算，避免浮點數精度問題
 ```
@@ -147,7 +149,7 @@ export class User {
   @Column({ length: 3, default: 'USD' })
   preferredCurrency: string;
 
-  @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 }) // <- 這個是什麼意思？
+  @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
   totalPortfolioValue: number; // 總投資組合價值 (快取)
 
   @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
@@ -171,7 +173,7 @@ export class User {
   refreshToken: string;
 
   // 關聯
-  @OneToMany(() => Portfolio, (portfolio) => portfolio.user) // <- 這個是什麼意思？
+  @OneToMany(() => Portfolio, (portfolio) => portfolio.user)
   portfolios: Portfolio[];
 }
 ```
@@ -208,7 +210,7 @@ export class Portfolio {
   @Column('uuid')
   userId: string;
 
-  @ManyToOne(() => User, (user) => user.portfolios, { onDelete: 'CASCADE' }) // <- 這個是什麼意思？
+  @ManyToOne(() => User, (user) => user.portfolios, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;
 
@@ -368,8 +370,8 @@ export class Transaction {
   })
   type: 'BUY' | 'SELL';
 
-  @Column({ type: 'int' })
-  quantity: number; // 交易股數
+  @Column({ type: 'decimal', precision: 18, scale: 8 })
+  quantity: number; // 交易股數 (支援碎股)
 
   @Column({ type: 'decimal', precision: 10, scale: 4 })
   price: number; // 交易價格
