@@ -5,8 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity'; // 引入 User Entity
-import { Post } from './post/entities/post.entity'; // 引入 Post Entity
-import { PostModule } from './post/post.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { StockModule } from './stock/stock.module';
@@ -40,7 +38,7 @@ import { CacheModule } from './cache/cache.module';
           username: config.get<string>('DB_USERNAME'),
           password: config.get<string>('DB_PASSWORD'),
           database: config.get<string>('DB_NAME'),
-          entities: [User, Post], // 明確列出所有 Entity
+          entities: [User], // 明確列出所有 Entity
           migrations: [__dirname + '/migrations/**/*{.ts,.js}'], // Migration 檔案的路徑
           migrationsRun: false, // 應用程式啟動時不自動執行 migration
           migrationsTableName: 'typeorm_migrations', // 儲存 migration 記錄的資料表名稱
@@ -48,7 +46,6 @@ import { CacheModule } from './cache/cache.module';
         };
       },
     }),
-    PostModule,
     AuthModule,
     StockModule,
     CacheModule,
