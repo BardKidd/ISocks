@@ -1,4 +1,4 @@
-import { Portfolio } from '@/portfolio/entities/portfolio.entity';
+import { Portfolio } from './portfolio.entity';
 import {
   Column,
   CreateDateColumn,

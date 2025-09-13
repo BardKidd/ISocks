@@ -12,10 +12,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "test:unit": "jest --testPathPattern='.*\\.spec\\.ts$'",
-    "test:integration": "jest --testPathPattern='.*\\.e2e\\.spec\\.ts$'",
     "test:all": "npm run test:unit && npm run test:integration",
-    "typeorm": "typeorm-ts-node-commonjs -d src/data-source.ts",
+    "typeorm": "ts-node -r tsconfig-paths/register --project tsconfig.json ./node_modules/typeorm/cli.js --dataSource src/data-source.ts",
     "migration:create": "npm run typeorm migration:create",
     "migration:generate": "npm run typeorm migration:generate",
     "migration:run": "npm run typeorm migration:run",
@@ -52,7 +50,6 @@
     "rxjs": "^7.8.1",
     "socket.io": "^4.8.1",
     "swagger-ui-express": "^5.0.1",
-    "tsconfig-paths": "^4.2.0",
     "typeorm": "^0.3.24"
   },
   "devDependencies": {
@@ -73,6 +70,7 @@
     "supertest": "^7.1.4",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5"
   }
 }

@@ -1,15 +1,15 @@
 import { Exclude } from 'class-transformer';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
+  Entity,
   OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { Portfolio } from '@/portfolio/entities/portfolio.entity';
+import { Portfolio } from '../../portfolio/entities/portfolio.entity';
 
-@Entity()
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -20,13 +20,14 @@ export class User {
   @Column({ unique: true, length: 255 })
   email: string;
 
-  @Column({ select: false }) // 預設查詢時不會返回密碼
+  @Column({ select: false })
   @Exclude()
   password: string;
 
   @CreateDateColumn()
   createdAt: Date;
 
+  // === 新增投資相關欄位 ===
   @UpdateDateColumn()
   updatedAt: Date;
 
@@ -39,9 +40,10 @@ export class User {
   @Column({ type: 'date', nullable: true })
   dateOfBirth: Date;
 
-  @Column({ length: 10, nullable: true })
+  @Column({ length: 20, nullable: true })
   phone: string;
 
+  // 投資偏好設定
   @Column({
     type: 'enum',
     enum: ['conservative', 'moderate', 'aggressive'],
@@ -53,21 +55,29 @@ export class User {
   preferredCurrency: string;
 
   @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
-  totalPortfolioValue: number;
+  totalPortfolioValue: number; // 總投資組合價值 (快取)
 
-  @Column({})
-  totalInvestment: number;
+  @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  totalInvestment: number; // 總投入金額 (快取)
 
-  totalReturn: number;
+  @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  totalReturn: number; // 總收益 (快取)
 
-  returnPercentage: number;
+  @Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
+  returnPercentage: number; // 總收益率 (快取)
 
+  // 帳戶狀態
+  @Column({ default: true })
   isActive: boolean;
 
+  @Column({ default: false })
   isEmailVerified: boolean;
 
+  @Column({ nullable: true })
+  @Exclude()
   refreshToken: string;
 
+  // 關聯
   // 使用 () => Portfolio 可以避免在檔案載入時，因為 User 和 Portfolio 互相引用造成循環依賴的問題。
   // 參數一用於關聯 Portfolio，第二個參數用來告訴 portfolio.user 欄位需要關聯到這個人。
   @OneToMany(() => Portfolio, (portfolio) => portfolio.user)

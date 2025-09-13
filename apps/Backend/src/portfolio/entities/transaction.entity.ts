@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Position } from '@/portfolio/entities/position.entity';
+import { Position } from './position.entity';
 
 @Entity('transactions')
 export class Transaction {
