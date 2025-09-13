@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Tech Stack
 - **Backend**: NestJS API with TypeORM, MySQL database, JWT authentication
-- **Frontend**: React/Vite application with Neumorphism UI design + shadcn/ui components
+- **Frontend**: Next.js application with App Router, Neumorphism UI design + shadcn/ui components
 - **APIs**: Alpha Vantage API for stock market data
 - **Charts**: Chart.js for data visualization
 - **Database**: MySQL with TypeORM migrations
@@ -65,9 +65,9 @@ pnpm migration:run
 pnpm migration:revert
 ```
 
-### Frontend (React/Vite)
+### Frontend (Next.js)
 ```bash
-cd apps/Frontend
+cd apps/frontend
 
 # Development server
 pnpm dev
@@ -78,8 +78,8 @@ pnpm build
 # Lint
 pnpm lint
 
-# Preview production build
-pnpm preview
+# Run production server
+pnpm start
 ```
 
 ## Architecture
@@ -94,12 +94,12 @@ pnpm preview
 - **Data Processing**: Stock price calculations and portfolio analytics
 
 ### Frontend Structure
-- **UI Framework**: React 19 with Vite
+- **UI Framework**: Next.js with App Router
 - **Design System**: Apple Human Interface Guidelines 2025 (Liquid Glass design system) with optional Neumorphism elements
 - **Styling**: Tailwind CSS + shadcn/ui components
 - **Charts**: Chart.js for portfolio performance visualization
 - **Forms**: React Hook Form with Zod validation
-- **Routing**: React Router v7
+- **Routing**: File-based App Router
 - **State Management**: React Context (AuthContext, PortfolioContext)
 - **Local Storage**: Persistent login state to avoid repeated authentication
 - **API Communication**: Axios for REST API calls
