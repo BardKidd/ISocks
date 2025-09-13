@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { StockModule } from './stock/stock.module';
 import { CacheModule } from './cache/cache.module';
+import { PortfolioModule } from './portfolio/portfolio.module';
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import { CacheModule } from './cache/cache.module';
           username: config.get<string>('DB_USERNAME'),
           password: config.get<string>('DB_PASSWORD'),
           database: config.get<string>('DB_NAME'),
-          entities: [User], // 明確列出所有 Entity
+          // entities: [User], // 不再需要手動列出
+          autoLoadEntities: true, // 自動載入所有透過 forFeature() 註冊的實體
           migrations: [__dirname + '/migrations/**/*{.ts,.js}'], // Migration 檔案的路徑
           migrationsRun: false, // 應用程式啟動時不自動執行 migration
           migrationsTableName: 'typeorm_migrations', // 儲存 migration 記錄的資料表名稱
@@ -49,6 +51,7 @@ import { CacheModule } from './cache/cache.module';
     AuthModule,
     StockModule,
     CacheModule,
+    PortfolioModule,
   ],
   controllers: [AppController],
   providers: [AppService],

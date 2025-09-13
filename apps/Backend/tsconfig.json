@@ -3,8 +3,11 @@
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
-    "emitDecoratorMetadata": true,
+    // NestJS 和 TypeORM 的核心功能，允許我們使用 @Injectable(), @Column() 這樣的裝飾器語法。
     "experimentalDecorators": true,
+    // 讓 TypeScript 在編譯時產生關於類別和裝飾器的「元數據」(metadata)。
+    // TypeORM 需要這些元數據來了解你的 Entity 屬性是什麼類型 (例如 string, number)，以便正確地建立資料庫欄位。
+    "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2021",
     "sourceMap": true,

@@ -43,8 +43,8 @@
 
 #### ⚙️ 3. 核心後端 API
 
-- [ ] **3.1** 建立 Portfolio Module, Service, Controller
-- [ ] **3.2** 實作 Portfolio 的 CRUD (Create, Read, Update, Delete) API 端點
+- [x] **3.1** 建立 Portfolio Module, Service, Controller
+- [x] **3.2** 實作 Portfolio 的 CRUD (Create, Read, Update, Delete) API 端點
 - [ ] **3.3** 建立 Position Module, Service, Controller
 - [ ] **3.4** 實作 Position 的 CRUD API 端點
 - [ ] **3.5** 建立 Transaction Module, Service, Controller
