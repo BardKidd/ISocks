@@ -1,0 +1,71 @@
+# 顯示在 GitHub Actions 的頁面上
+name: 檢查 Format 與 Lint
+
+# 觸發此工作流程的事件
+on:
+  # 當有程式碼推送到 main 分支時
+  push:
+    branches: [main]
+  # 當有 Pull Request 指向 main 分支時
+  pull_request:
+    branches: [main]
+
+# 定義工作流程中要執行的任務 (Job)
+jobs:
+  #任務的 ID，可以自訂，這裡我們稱之為 lint
+  lint:
+    # 執行此任務的虛擬機環境
+    runs-on: ubuntu-latest
+
+    # 任務中要執行的步驟(Step)
+    steps:
+      # 步驟一：取得你的專案程式碼
+      - name: 下載專案程式碼
+        # 已經寫好可以重複使用的 action
+        # 作者/Action儲存庫名稱
+        # 作者=actions=GitHun 官方團隊
+        # checkout 是 Action 的名稱
+        # 對應 https://github.com/actions/checkout 這個公開專案
+        # 主要用途就是把你上傳到 GitHub 的專案下載到虛擬機中。
+        uses: actions/checkout@v4
+
+      # 步驟二：設定 pnpm 環境(因為專案使用 pnpm)
+      - name: 設定 pnpm 環境
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9 # 需要根據 pnpm 版本調整
+
+      - name: 設定 Node.js 環境
+        uses: action/setup-node@4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm' # 為 pnpm 設定快取，加速後續的安裝
+
+      - name: 安裝專案依賴
+        run: pnpm install
+
+      - name: Lint 檢查
+        run: pnpm lint
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 下載專案程式碼
+        uses: actions/checkout@v4
+
+      - name: 設定 pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: 設定 Node.js from .nvmrc
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: 安裝套件
+        run: pnpm install
+
+      - name: 檢查 Format
+        run: pnpm format
