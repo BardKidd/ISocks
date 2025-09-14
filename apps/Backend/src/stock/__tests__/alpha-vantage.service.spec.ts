@@ -91,7 +91,7 @@ describe('AlphaVantageService', () => {
       expect(mockCacheService.set).toHaveBeenCalledWith(
         'stock_search: aapl',
         result,
-        3600
+        3600,
       );
     });
 
@@ -112,7 +112,7 @@ describe('AlphaVantageService', () => {
 
       mockCacheService.get.mockResolvedValue(null);
       mockHttpService.get.mockReturnValue(
-        throwError(() => new Error('API Error'))
+        throwError(() => new Error('API Error')),
       );
 
       await expect(service.searchStocks(query)).rejects.toThrow();
@@ -150,7 +150,7 @@ describe('AlphaVantageService', () => {
       expect(mockCacheService.set).toHaveBeenCalledWith(
         'stock_price: AAPL:2024-01-15',
         result,
-        86400
+        86400,
       );
     });
 
@@ -217,16 +217,16 @@ describe('AlphaVantageService', () => {
       mockCacheService.get.mockResolvedValue(null);
       mockHttpService.get.mockReturnValue(of(mockResponse));
 
-      jest.spyOn(Date, 'now').mockReturnValue(
-        new Date('2024-01-15T14:30:00Z').getTime()
-      );
+      jest
+        .spyOn(Date, 'now')
+        .mockReturnValue(new Date('2024-01-15T14:30:00Z').getTime());
 
       await service.getCurrentQuote(symbol);
 
       expect(mockCacheService.set).toHaveBeenCalledWith(
         'stock_current: AAPL',
         expect.any(Object),
-        expect.any(Number)
+        expect.any(Number),
       );
     });
   });
@@ -246,7 +246,7 @@ describe('AlphaVantageService', () => {
             statusText: 'OK',
             headers: {},
             config: {} as any,
-          })
+          }),
         );
 
       const result = await service.searchStocks(query);
@@ -260,7 +260,7 @@ describe('AlphaVantageService', () => {
 
       mockCacheService.get.mockResolvedValue(null);
       mockHttpService.get.mockReturnValue(
-        throwError(() => new Error('Persistent Error'))
+        throwError(() => new Error('Persistent Error')),
       );
 
       await expect(service.searchStocks(query)).rejects.toThrow();

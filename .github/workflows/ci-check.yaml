@@ -45,7 +45,7 @@ jobs:
         run: pnpm install
 
       - name: Lint 檢查
-        run: pnpm lint
+        run: npx turbo lint
 
   format:
     runs-on: ubuntu-latest
@@ -68,4 +68,4 @@ jobs:
         run: pnpm install
 
       - name: 檢查 Format
-        run: pnpm format
+        run: npx turbo format

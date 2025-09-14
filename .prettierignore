@@ -1,0 +1,10 @@
+# Ignore artifacts:
+.turbo
+.next
+.output
+.vercel
+dist
+coverage
+
+# Ignore dependency directories:
+node_modules

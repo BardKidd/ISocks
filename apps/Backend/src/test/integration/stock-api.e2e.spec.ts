@@ -15,7 +15,7 @@ describe('Stock API (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     cacheService = moduleFixture.get<CacheService>(CacheService);
-    
+
     await app.init();
   });
 
@@ -46,9 +46,7 @@ describe('Stock API (e2e)', () => {
     });
 
     it('應該處理空查詢參數', async () => {
-      await request(app.getHttpServer())
-        .get('/api/stocks/search')
-        .expect(400);
+      await request(app.getHttpServer()).get('/api/stocks/search').expect(400);
     });
 
     it('應該處理無效查詢', async () => {
@@ -84,7 +82,7 @@ describe('Stock API (e2e)', () => {
     it('應該返回特定日期的歷史價格', async () => {
       const symbol = 'AAPL';
       const date = '2024-01-15';
-      
+
       const response = await request(app.getHttpServer())
         .get(`/api/stocks/${symbol}/price?date=${date}`)
         .expect(200);
@@ -121,7 +119,7 @@ describe('Stock API (e2e)', () => {
   describe('/api/stocks/:symbol/current (GET)', () => {
     it('應該返回即時報價', async () => {
       const symbol = 'AAPL';
-      
+
       const response = await request(app.getHttpServer())
         .get(`/api/stocks/${symbol}/current`)
         .expect(200);
@@ -136,7 +134,7 @@ describe('Stock API (e2e)', () => {
       expect(response.body).toHaveProperty('changePercent');
       expect(response.body).toHaveProperty('volume');
       expect(response.body).toHaveProperty('lastTradingDay');
-      
+
       expect(typeof response.body.currentPrice).toBe('number');
       expect(typeof response.body.change).toBe('number');
     });
@@ -178,13 +176,13 @@ describe('Stock API (e2e)', () => {
   describe('API 效能測試', () => {
     it('股票搜尋應該在合理時間內完成', async () => {
       const startTime = Date.now();
-      
+
       await request(app.getHttpServer())
         .get('/api/stocks/search?query=AAPL')
         .expect(200);
-        
+
       const duration = Date.now() - startTime;
-      
+
       // 應該在 5 秒內完成 (考慮外部 API 延遲)
       expect(duration).toBeLessThan(5000);
     });
@@ -197,13 +195,13 @@ describe('Stock API (e2e)', () => {
 
       // 測試快取的請求
       const startTime = Date.now();
-      
+
       await request(app.getHttpServer())
         .get('/api/stocks/search?query=MSFT')
         .expect(200);
-        
+
       const duration = Date.now() - startTime;
-      
+
       // 快取的請求應該在 100ms 內完成
       expect(duration).toBeLessThan(100);
     });

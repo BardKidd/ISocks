@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { ApiResponseDto } from '../common/dto/api-response.dto';
@@ -33,7 +37,11 @@ export class AuthService {
     );
   }
 
-  async register(data: { email: string; name: string; password: string }): Promise<ApiResponseDto<any>> {
+  async register(data: {
+    email: string;
+    name: string;
+    password: string;
+  }): Promise<ApiResponseDto<any>> {
     const existingUser = await this.userService.findByEmail(data.email);
     if (existingUser) {
       throw new ConflictException('此電子郵件已被註冊');
@@ -41,7 +49,7 @@ export class AuthService {
 
     const newUser = await this.userService.create(data);
     const { password: _, ...result } = newUser;
-    
+
     return ApiResponseDto.success(result, ['註冊成功']);
   }
 }

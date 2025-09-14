@@ -18,7 +18,9 @@
     "migration:generate": "npm run typeorm migration:generate",
     "migration:run": "npm run typeorm migration:run",
     "migration:revert": "npm run typeorm migration:revert",
-    "migration:show": "npm run typeorm migration:show"
+    "migration:show": "npm run typeorm migration:show",
+    "format": "prettier --write . --ignore-path ../../.prettierignore",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",
